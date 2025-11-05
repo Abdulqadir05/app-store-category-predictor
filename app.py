@@ -1,49 +1,70 @@
+# =====================================================
+# 📱 APP STORE CATEGORY PREDICTOR (Streamlit + Google Drive)
+# =====================================================
+
 import streamlit as st
 import pandas as pd
 import joblib
+import requests
+from pathlib import Path
 
-st.set_page_config(page_title="App Category Predictor", page_icon="📱", layout="centered")
+# -----------------------------------------------------
+# 🔹 MODEL DOWNLOAD FUNCTION
+# -----------------------------------------------------
+def download_model_from_gdrive():
+    file_id = "1sFiXnwDupqkWBweyu2wbjxH9YkGMf_kv"
+    url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    output = "catboost_app_category_model.pkl"
 
+    if not Path(output).exists():
+        st.info("📥 Downloading model from Google Drive...")
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            with open(output, "wb") as f:
+                f.write(response.content)
+            st.success("✅ Model downloaded successfully!")
+        except Exception as e:
+            st.error(f"❌ Failed to download model: {e}")
 
+# -----------------------------------------------------
+# 🧠 LOAD MODEL
+# -----------------------------------------------------
+try:
+    if not Path("catboost_app_category_model.pkl").exists():
+        download_model_from_gdrive()
+
+    model = joblib.load("catboost_app_category_model.pkl")
+    st.success("✅ Model loaded successfully!")
+
+except Exception as e:
+    st.error(f"⚠️ Model could not be loaded: {e}")
+    model = None
+
+# -----------------------------------------------------
+# 🎯 APP UI
+# -----------------------------------------------------
 st.title("📱 App Store Category Predictor")
 st.write("Predict the category of an iOS app using a trained CatBoost model.")
 
-# Load model safely
-try:
-    model = joblib.load('catboost_app_category_model.pkl')
-except Exception as e:
-    st.error(f"⚠️ Model could not be loaded: {e}")
-    st.stop()
-
-# Example category mapping
-mapping = {
-    0:'Business',1:'Education',2:'Entertainment',3:'Games',4:'Lifestyle',
-    5:'Finance',6:'Health & Fitness',7:'Music'
-}
-
-# Input
-dev_id = st.text_input("Developer ID","12345")
-size = st.number_input("App Size (MB)",1.0,5000.0,250.0)
-rating = st.slider("Average User Rating",0.0,5.0,4.0)
-ios = st.number_input("Required iOS Version",8.0,18.0,13.0,step=0.1)
-gap = st.number_input("Time Gap (Days)",0,5000,365)
+# User Inputs
+developer_id = st.number_input("Developer ID", min_value=0)
+app_size = st.number_input("App Size (MB)", min_value=0.0)
+average_rating = st.slider("Average User Rating", 0.0, 5.0, 4.0)
+ios_version = st.number_input("Required iOS Version", min_value=1.0)
+time_gap = st.number_input("Time Gap (Days)", min_value=0)
 
 if st.button("🔮 Predict"):
-    sample = pd.DataFrame({
-        'DeveloperId':[dev_id],
-        'Time_Gap_Days':[gap],
-        'Size_MB':[size],
-        'Updated_Month':['6'],
-        'Required_IOS_Version':[ios],
-        'Release_Year':[2023],
-        'Content_Rating':['4+'],
-        'Updated_Year':[2024],
-        'Release_Month':['2'],
-        'Average_User_Rating':[rating]
-    })
-    for c in ['DeveloperId','Content_Rating','Release_Month','Updated_Month']:
-        sample[c]=sample[c].astype(str)
+    if model is not None:
+        input_df = pd.DataFrame({
+            "DeveloperId": [developer_id],
+            "Size_MB": [app_size],
+            "Average_User_Rating": [average_rating],
+            "Required_IOS_Version": [ios_version],
+            "Time_Gap_Days": [time_gap]
+        })
 
-    pred = int(model.predict(sample)[0])
-    label = mapping.get(pred,f"Unknown ({pred})")
-    st.success(f"🎯 Predicted Category: {label}")
+        prediction = model.predict(input_df)[0]
+        st.success(f"🎯 Predicted App Category: {prediction}")
+    else:
+        st.warning("⚠️ Model not available. Please check your Drive link or internet connection.")

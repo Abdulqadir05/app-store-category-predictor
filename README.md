@@ -5,7 +5,7 @@ An interactive **Machine Learning web app** built using **CatBoost** and **Strea
 ---
 
 ## 🚀 Live Demo
-🌐 **Try it now:** [https://abdulqadir05-app-store-category-predictor.streamlit.app](https://abdulqadir05-app-store-category-predictor.streamlit.app)
+🌐 **Try it now:** [https://abdulqadir05-app-store-category-predictor.streamlit.app](https://app-store-category-predictor-8amufwrfzumupubzqo6tdx.streamlit.app/)
 
 ---
 

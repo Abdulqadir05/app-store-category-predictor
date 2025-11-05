@@ -63,8 +63,17 @@ ios_version = st.number_input("📱 Required iOS Version", min_value=1.0)
 time_gap = st.number_input("⏱️ Time Gap (Days)", min_value=0)
 
 # -----------------------------------------------------
-# 🔮 Prediction Button
+# 🧩 Helper: Ensure same feature order as training
 # -----------------------------------------------------
+EXPECTED_FEATURES = [
+    "DeveloperId",
+    "Size_MB",
+    "Average_User_Rating",
+    "Required_IOS_Version",
+    "Time_Gap_Days"
+]
+
+
 if st.button("🔮 Predict Category"):
     if model is not None:
         input_df = pd.DataFrame({
@@ -75,13 +84,16 @@ if st.button("🔮 Predict Category"):
             "Time_Gap_Days": [time_gap]
         })
 
+        # Reorder columns to match model training schema
+        input_df = input_df[EXPECTED_FEATURES]
+
         with st.spinner("🤖 Predicting category..."):
-            time.sleep(2)
-            prediction = model.predict(input_df)[0]
-        st.success(f"🎯 **Predicted App Category:** {prediction}")
+            prediction = model.predict(input_df)
+        st.success(f"🎯 **Predicted App Category:** {prediction[0]}")
         st.balloons()
     else:
         st.warning("⚠️ Model not available. Please check your GitHub release link or internet connection.")
+
 
 st.markdown("---")
 st.caption("🚀 Powered by CatBoost & Streamlit | Deployed by Abdul Qadir")

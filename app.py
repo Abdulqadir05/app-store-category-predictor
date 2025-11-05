@@ -11,21 +11,45 @@ from pathlib import Path
 # -----------------------------------------------------
 # 🔹 MODEL DOWNLOAD FUNCTION
 # -----------------------------------------------------
+# -----------------------------------------------------
+# 🔹 MODEL DOWNLOAD FUNCTION (supports large Drive files)
+# -----------------------------------------------------
 def download_model_from_gdrive():
-    file_id = "1sFiXnwDupqkWBweyu2wbjxH9YkGMf_kv"
+    import requests
+    from pathlib import Path
+
+    file_id = "1sFiXnwDupqkWBweyu2wbjxH9YkGMf_kv"  # ✅ your Drive file ID
     url = f"https://drive.google.com/uc?export=download&id={file_id}"
     output = "catboost_app_category_model.pkl"
 
-    if not Path(output).exists():
-        st.info("📥 Downloading model from Google Drive...")
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            with open(output, "wb") as f:
-                f.write(response.content)
-            st.success("✅ Model downloaded successfully!")
-        except Exception as e:
-            st.error(f"❌ Failed to download model: {e}")
+    if Path(output).exists():
+        return
+
+    st.info("📥 Downloading model from Google Drive... (please wait 1–2 mins)")
+    session = requests.Session()
+    response = session.get(url, stream=True)
+    
+    # Handle Google Drive download confirmation
+    def get_confirm_token(resp):
+        for key, value in resp.cookies.items():
+            if key.startswith('download_warning'):
+                return value
+        return None
+
+    token = get_confirm_token(response)
+    if token:
+        params = {'confirm': token}
+        response = session.get(url, params=params, stream=True)
+
+    # Save file in chunks
+    CHUNK_SIZE = 32768
+    with open(output, "wb") as f:
+        for chunk in response.iter_content(CHUNK_SIZE):
+            if chunk:
+                f.write(chunk)
+    
+    st.success("✅ Model downloaded successfully!")
+
 
 # -----------------------------------------------------
 # 🧠 LOAD MODEL

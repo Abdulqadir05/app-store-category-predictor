@@ -145,7 +145,7 @@ catboost_app_category_model.pkl
 🔟 Model Deployment — Streamlit Web App
 
 Deployed the final CatBoost model via Streamlit Cloud
-🌐 Live App: 🌐 **Try it now:** [https://abdulqadir05-app-store-category-predictor.streamlit.app](https://abdulqadir05-app-store-category-predictor.streamlit.app)
+🌐 Live App: 🌐 **Try it now:** [https://abdulqadir05-app-store-category-predictor.streamlit.app](https://app-store-category-predictor-8amufwrfzumupubzqo6tdx.streamlit.app/)
 
 App Features:
 

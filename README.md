@@ -1,11 +1,9 @@
-👨‍💻 Author
-Abdul Qadir /
-🎓 BS in Applied AI & Data Science, IIT Jodhpur /
-💼 Aspiring Data Scientist | Machine Learning Engineer /
-🌍 Passion: End-to-End AI Solutions, EDA, Deployment /
-📧 : (b24bs1012@iitj.ac.in)
-
-🔗 GitHub Profile : 
+## 👨‍💻 Author  
+**Abdul Qadir** <br>
+🎓 BS in Applied AI & Data Science, IIT Jodhpur <br>
+💼 Aspiring Data Scientist | Machine Learning Engineer <br>
+🌍 Passion: End-to-End AI Solutions, EDA, Deployment <br>
+📧 b24bs1012@iitj.ac.in
 
 📱 App Store Category Predictor — End-to-End ML Project
 🧠 Predict the Category of iOS Apps using Machine Learning

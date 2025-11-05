@@ -11,58 +11,35 @@ from pathlib import Path
 # -----------------------------------------------------
 # 🔹 MODEL DOWNLOAD FUNCTION
 # -----------------------------------------------------
-# -----------------------------------------------------
-# 🔹 MODEL DOWNLOAD FUNCTION (supports large Drive files)
-# -----------------------------------------------------
+
 def download_model_from_gdrive():
-    import requests
-    from pathlib import Path
-
-    file_id = "1sFiXnwDupqkWBweyu2wbjxH9YkGMf_kv"  # ✅ your Drive file ID
-    url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    import gdown
+    file_id = "1sFiXnwDupqkWBweyu2wbjxH9YkGMf_kv" 
     output = "catboost_app_category_model.pkl"
+    url = f"https://drive.google.com/uc?id={file_id}"
 
-    if Path(output).exists():
-        return
+    if not Path(output).exists():
+        st.info("📥 Downloading model from Google Drive... (Please wait ~1 min)")
+        try:
+            gdown.download(url, output, quiet=False)
+            st.success("Model downloaded successfully!")
+        except Exception as e:
+            st.error(f"❌ Failed to download model: {e}")
 
-    st.info("📥 Downloading model from Google Drive... (please wait 1–2 mins)")
-    session = requests.Session()
-    response = session.get(url, stream=True)
-    
-    # Handle Google Drive download confirmation
-    def get_confirm_token(resp):
-        for key, value in resp.cookies.items():
-            if key.startswith('download_warning'):
-                return value
-        return None
-
-    token = get_confirm_token(response)
-    if token:
-        params = {'confirm': token}
-        response = session.get(url, params=params, stream=True)
-
-    # Save file in chunks
-    CHUNK_SIZE = 32768
-    with open(output, "wb") as f:
-        for chunk in response.iter_content(CHUNK_SIZE):
-            if chunk:
-                f.write(chunk)
-    
-    st.success("✅ Model downloaded successfully!")
 
 
 # -----------------------------------------------------
-# 🧠 LOAD MODEL
+# LOAD MODEL
 # -----------------------------------------------------
 try:
     if not Path("catboost_app_category_model.pkl").exists():
         download_model_from_gdrive()
 
     model = joblib.load("catboost_app_category_model.pkl")
-    st.success("✅ Model loaded successfully!")
+    st.success("Model loaded successfully!")
 
 except Exception as e:
-    st.error(f"⚠️ Model could not be loaded: {e}")
+    st.error(f"Model could not be loaded: {e}")
     model = None
 
 # -----------------------------------------------------
@@ -89,6 +66,6 @@ if st.button("🔮 Predict"):
         })
 
         prediction = model.predict(input_df)[0]
-        st.success(f"🎯 Predicted App Category: {prediction}")
+        st.success(f"Predicted App Category: {prediction}")
     else:
-        st.warning("⚠️ Model not available. Please check your Drive link or internet connection.")
+        st.warning("Model not available. Please check your Drive link or internet connection.")

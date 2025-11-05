@@ -1,8 +1,8 @@
 👨‍💻 Author
-Abdul Qadir
-🎓 BS in Applied AI & Data Science, IIT Jodhpur
-💼 Aspiring Data Scientist | Machine Learning Engineer
-🌍 Passion: End-to-End AI Solutions, EDA, Deployment
+Abdul Qadir /
+🎓 BS in Applied AI & Data Science, IIT Jodhpur /
+💼 Aspiring Data Scientist | Machine Learning Engineer /
+🌍 Passion: End-to-End AI Solutions, EDA, Deployment /
 📧 : (b24bs1012@iitj.ac.in)
 
 🔗 GitHub Profile : 

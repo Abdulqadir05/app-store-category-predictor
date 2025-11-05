@@ -1,0 +1,6 @@
+# Ignore large files and cache
+*.pkl
+*.h5
+*.pt
+*.onnx
+__pycache__/

@@ -143,7 +143,9 @@ if st.button("🔮 Predict App Category"):
             y_pred_label = le_target.inverse_transform([int(y_pred_num[0])])[0]
 
             st.success(f"🎯 **Predicted App Category:** {y_pred_label}")
+            
        except Exception as e:
+
             st.error(f"⚠️ Prediction failed: {e}")
 
 # ============================================================

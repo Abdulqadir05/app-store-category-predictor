@@ -1,122 +1,144 @@
 
-# 📱 APP STORE CATEGORY PREDICTOR — Streamlit Deployment
-# =====================================================
+# =============================================================
+# 📱 APP STORE CATEGORY PREDICTOR — Professional Streamlit App
+# =============================================================
 
 import streamlit as st
 import pandas as pd
 import joblib
-import requests
 from pathlib import Path
 
-# -----------------------------------------------------
-# 🔹 GitHub Release URLs (MODEL + SCHEMA)
-# -----------------------------------------------------
-MODEL_URL = "https://github.com/Abdulqadir05/app-store-category-predictor/releases/download/v1.0/catboost_app_category_model.pkl"
-SCHEMA_URL = "https://github.com/Abdulqadir05/app-store-category-predictor/releases/download/v1.0/feature_schema.pkl"
+# =============================================================
+# 🎯 Page Configuration
+# =============================================================
+st.set_page_config(
+    page_title="App Store Category Predictor",
+    page_icon="📱",
+    layout="centered",
+    initial_sidebar_state="expanded"
+)
 
-MODEL_PATH = "catboost_app_category_model.pkl"
-SCHEMA_PATH = "feature_schema.pkl"
+# =============================================================
+# 🎨 Custom CSS Styling
+# =============================================================
+st.markdown("""
+    <style>
+        body { background-color: #f5f7fa; }
+        .main-title {
+            font-size: 36px !important;
+            color: #2b8a3e;
+            text-align: center;
+            font-weight: bold;
+        }
+        .sub-title {
+            font-size: 18px !important;
+            color: #495057;
+            text-align: center;
+        }
+        .stButton>button {
+            background-color: #2b8a3e;
+            color: white;
+            font-weight: bold;
+            border-radius: 12px;
+            padding: 0.6em 1.2em;
+        }
+        .stButton>button:hover {
+            background-color: #218838;
+            color: #f8f9fa;
+        }
+        .prediction-box {
+            background-color: #e9f5ee;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 6px solid #2b8a3e;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
-# -----------------------------------------------------
-# 🔹 Utility: Download file if missing
-# -----------------------------------------------------
-def download_file(url, out_path, label):
-    """Downloads large files from GitHub release"""
-    if Path(out_path).exists():
-        return
-    with st.spinner(f"📥 Downloading {label}... please wait"):
-        try:
-            r = requests.get(url, stream=True, timeout=180)
-            r.raise_for_status()
-            with open(out_path, "wb") as f:
-                for chunk in r.iter_content(8192):
-                    if chunk:
-                        f.write(chunk)
-            st.success(f"✅ {label} downloaded successfully!")
-        except Exception as e:
-            st.error(f"❌ Failed to download {label}: {e}")
+# =============================================================
+# 🧠 Load Model + Label Encoder with Cache
+# =============================================================
+@st.cache_resource
+def load_model():
+    try:
+        model = joblib.load("catboost_app_category_model.pkl")
+        le_target = joblib.load("category_label_encoder.pkl")
+        return model, le_target
+    except Exception as e:
+        st.error(f"⚠️ Failed to load model: {e}")
+        return None, None
 
-# -----------------------------------------------------
-# 🔹 Load model & schema
-# -----------------------------------------------------
-try:
-    if not Path(MODEL_PATH).exists():
-        download_file(MODEL_URL, MODEL_PATH, "Model")
-    if not Path(SCHEMA_PATH).exists():
-        download_file(SCHEMA_URL, SCHEMA_PATH, "Schema")
+model, le_target = load_model()
 
-    model = joblib.load(MODEL_PATH)
-    schema = joblib.load(SCHEMA_PATH)
-    st.success("✅ Model and schema loaded successfully!")
-
-except Exception as e:
-    st.error(f"⚠️ Model loading failed: {e}")
-    model, schema = None, None
-
-# -----------------------------------------------------
-# 🔹 Category mapping (for human-readable output)
-# -----------------------------------------------------
-category_map = {
-    0: 'Book', 1: 'Business', 2: 'Catalogs', 3: 'Education', 4: 'Entertainment',
-    5: 'Finance', 6: 'Food & Drink', 7: 'Games', 8: 'Health & Fitness', 9: 'Lifestyle',
-    10: 'Medical', 11: 'Music', 12: 'Navigation', 13: 'News', 14: 'Photo & Video',
-    15: 'Productivity', 16: 'Reference', 17: 'Shopping', 18: 'Social Networking',
-    19: 'Sports', 20: 'Travel', 21: 'Utilities', 22: 'Weather', 23: 'Kids',
-    24: 'Graphics & Design', 25: 'AR & VR'
-}
-
-# -----------------------------------------------------
-# 🎨 Streamlit UI
-# -----------------------------------------------------
-st.title("📱 App Store Category Predictor")
-st.markdown("Predict the **category of an iOS app** using a trained CatBoost model.")
-
+# =============================================================
+# 🏷️ App Header
+# =============================================================
+st.markdown('<p class="main-title">📱 App Store Category Predictor</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-title">An AI-powered model to predict the iOS app category using CatBoost</p>', unsafe_allow_html=True)
 st.divider()
 
-# 🔹 User Inputs
-developer_id  = st.number_input("👨‍💻 Developer ID", min_value=0, step=1, value=500000000)
-app_size_mb   = st.number_input("💾 App Size (MB)", min_value=0.0, step=0.1, value=120.5)
-avg_rating    = st.slider("⭐ Average User Rating", 0.0, 5.0, 4.3, 0.1)
-ios_version   = st.text_input("📱 Required iOS Version (e.g., 13.0)", value="13.0")
-time_gap_days = st.number_input("⏱️ Time Gap (Days)", min_value=0, step=1, value=150)
+# =============================================================
+# 🧩 Input Fields (UI Layout)
+# =============================================================
+st.header("🔧 Input Parameters")
 
-st.divider()
+col1, col2 = st.columns(2)
 
-# 🔹 Prediction button
-if st.button("🔮 Predict App Category"):
-    if model is None or schema is None:
-        st.error("⚠️ Model not loaded. Please refresh and try again.")
+with col1:
+    developer_id = st.number_input("👨‍💻 Developer ID", min_value=100000000, max_value=2000000000, value=500000000, step=1, key="dev_id")
+    app_size_mb = st.number_input("💾 App Size (MB)", min_value=1.0, max_value=5000.0, value=150.0, step=0.1, key="size_mb")
+    avg_rating = st.slider("⭐ Average User Rating", 0.0, 5.0, 4.5, 0.1, key="rating")
+
+with col2:
+    ios_version = st.number_input("📱 Required iOS Version", min_value=1.0, max_value=20.0, value=13.0, step=0.1, key="ios_version")
+    time_gap = st.number_input("⏱️ Time Gap (Days)", min_value=0, max_value=1000, value=120, step=1, key="time_gap")
+
+st.markdown("🧩 *Default values for Content Rating and Release Info are used based on historical app data.*")
+
+# =============================================================
+# 🎯 Prediction Logic
+# =============================================================
+if st.button("🔮 Predict App Category", use_container_width=True, key="predict_btn"):
+    if model is None or le_target is None:
+        st.error("⚠️ Model or encoder not loaded. Please verify your setup.")
     else:
         try:
-            # Prepare input
-            features = schema["features"]
-            input_data = pd.DataFrame([{
+            # Input as DataFrame (matching training schema)
+            input_df = pd.DataFrame([{
                 "DeveloperId": developer_id,
                 "Size_MB": app_size_mb,
                 "Average_User_Rating": avg_rating,
-                "Required_IOS_Version": ios_version,
-                "Time_Gap_Days": time_gap_days,
+                "Required_IOS_Version": str(ios_version),  # keep as string if categorical
+                "Time_Gap_Days": time_gap,
                 "Content_Rating": "4+",
                 "Release_Year": 2023,
                 "Updated_Year": 2024,
                 "Updated_Month": 6,
                 "Release_Month": 8
-            }])[features]
+            }])
 
-            st.caption("🧩 Final input sample sent to model:")
-            st.dataframe(input_data)
+            # Prediction
+            pred_num = model.predict(input_df)[0]
+            pred_label = le_target.inverse_transform([int(pred_num)])[0]
 
-            # Predict
-            y_pred_num = model.predict(input_data)
-            y_pred_label = category_map.get(int(y_pred_num[0]), "Unknown")
-
-            st.success(f"🎯 **Predicted App Category:** {y_pred_label}")
+            # Result Box
+            st.markdown('<div class="prediction-box">', unsafe_allow_html=True)
+            st.subheader("🎯 Prediction Result:")
+            st.write(f"**Predicted App Category:** `{pred_label}`")
+            st.markdown("</div>", unsafe_allow_html=True)
 
         except Exception as e:
             st.error(f"⚠️ Prediction failed: {e}")
 
-# -----------------------------------------------------
-# 🧾 FOOTER
-# -----------------------------------------------------
-st.markdown("---")
-st.caption("🚀 Built & Deployed by **Abdul Qadir** | IIT Jodhpur | Powered by CatBoost & Streamlit")
+# =============================================================
+# 🧾 Footer
+# =============================================================
+st.divider()
+st.markdown("""
+**👨‍💻 Developed by:** Abdul Qadir  
+🎓 *BS in Applied AI & Data Science, IIT Jodhpur*  
+💼 *Aspiring Data Scientist | Machine Learning Engineer*  
+📧 **b24bs1012@iitj.ac.in**  
+🌍 *Powered by CatBoost + Streamlit*
+""")
+

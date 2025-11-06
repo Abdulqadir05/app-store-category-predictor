@@ -5,141 +5,118 @@
 🌍 Passion: End-to-End AI Solutions, EDA, Deployment <br>
 📧 b24bs1012@iitj.ac.in
 
-📱**App Store Category Predictor — End-to-End ML Project**
-🧠 Predict the Category of iOS Apps using Machine Learning
+# 📱 App Store Category Predictor
 
-This project is a complete end-to-end data science pipeline, built on the Apple App Store dataset.
-It covers everything — from Exploratory Data Analysis (EDA) to model deployment using Streamlit Cloud.
+> *An end-to-end Machine Learning project that predicts iOS App Categories using CatBoost (GPU accelerated).*
 
-🚀 **Project Overview**
+---
 
-The goal of this project is to build a classification model that predicts an app’s category based on its metadata such as rating, size, iOS version requirement, developer, and release/update patterns.
+## 🚀 Project Overview
 
-The final model is trained using CatBoostClassifier, optimized for handling categorical and large-scale data efficiently.
+The **App Store Category Predictor** is a complete end-to-end ML solution that:
+- Cleans and preprocesses raw App Store data 🧹  
+- Performs **Exploratory Data Analysis (EDA)** to uncover trends 📊  
+- Trains a **CatBoost GPU-powered classifier** for category prediction ⚙️  
+- Deploys an interactive **Streamlit web app** for real-time predictions 🌐  
 
-🧩**End-to-End Workflow**
-**Data Collection & Understanding**
+This project demonstrates mastery in **Applied AI**, **EDA**, **Model Building**, and **Deployment** — essential for data science industry roles.
 
-Source: Apple App Store dataset (1.2M+ apps)
+---
 
-Columns:
-App_Name, Category, Content_Rating, Size_MB, Required_IOS_Version,
-Average_User_Rating, Price, DeveloperId, Release_Year, Updated_Year, etc.
+## 🔍 Workflow Summary
 
-**Data Cleaning & Preprocessing**
+| Stage | Description |
+|:------|:-------------|
+| 🧹 **Data Cleaning** | Handled missing values, encoding, scaling, and outlier correction |
+| 📊 **EDA** | Used Matplotlib & Seaborn to visualize app trends and patterns |
+| ⚙️ **Feature Engineering** | Created features like `Time_Gap_Days`, `App_Size_Bins`, etc. |
+| 🧠 **Model Building** | Trained and optimized multiple ML models, finalized CatBoost |
+| ⚡ **GPU Training** | Leveraged **Google Colab GPU** for accelerated model training |
+| ✅ **Evaluation** | Compared metrics — Accuracy, Precision, Recall, and F1-score |
+| 🌐 **Deployment** | Hosted on **Streamlit Cloud** for public access |
 
-✅ Handled missing values
-✅ Dropped duplicates
-✅ Fixed inconsistent formats in Size_MB, Price, Required_IOS_Version
-✅ Converted data types and extracted time-based features (Release_Month, Updated_Month)
-✅ Handled non-ASCII text & Unicode developer names
+---
 
-**Feature Engineering**
+## 🧩 Tech Stack
 
-⚙️ Created new features:
-Time_Gap_Days (difference between release and update)
-App_Type (Free vs Paid)
-Encoded categorical variables using LabelEncoder / OneHotEncoder
-Converted numerical outliers using log10 transformation and RobustScaler
+| Domain | Tools / Libraries |
+|:-------|:------------------|
+| **Data Analysis** | Pandas, NumPy, Matplotlib, Seaborn |
+| **Modeling** | CatBoost, Scikit-learn |
+| **Feature Engineering** | Label Encoding, Data Transformation |
+| **Deployment** | Streamlit, GitHub Releases, Streamlit Cloud |
+| **Environment** | Google Colab (GPU) + VS Code |
 
-**Exploratory Data Analysis (EDA)**
+---
 
-📊 Conducted using Matplotlib, Seaborn, Plotly
-Key Insights Visualized:
-Distribution of iOS version requirements
-Rating trends vs app size
-Most common release months
-Free vs Paid ratio
-Correlation heatmap
-Top 10 features affecting app ratings
+## ⚙️ Model Details
 
-**Outlier Detection & Transformation**
-Detected using IQR & Z-score methods, then fixed using:
-Log transformation for skewed columns (Reviews, Price)
-RobustScaler for Size_MB, Time_Gap_Days, Current_Version_Reviews
+- **Algorithm:** CatBoost Classifier  
+- **Mode:** GPU Accelerated  
+- **Loss Function:** MultiClass  
+- **Training Accuracy:** ~51.4%  
+- **Test Accuracy:** ~44.4%  
+- **Top Influential Features:**
+  - DeveloperId  
+  - Size_MB  
+  - Average_User_Rating  
+  - Required_IOS_Version  
+  - Time_Gap_Days  
 
-**Feature Selection & Multicollinearity Check (VIF)**
-✅ Removed multicollinear features with high VIF
-✅ Retained important predictors such as:
-DeveloperId, Size_MB, Average_User_Rating, Required_IOS_Version, Time_Gap_Days, Release_Year, etc.
+---
 
-**Model Building**
-Models Tested:
-Decision Tree Classifier 🌳
-Random Forest Classifier 🌲
-Gradient Boosting Classifier 
-LightGBM ⚡
-CatBoost Classifier (Final) 
-Why CatBoost?
-Handles categorical data automatically
-Efficient on large datasets
-Less overfitting
-GPU acceleration support
+## 🧠 How It Works
 
-**Final Metrics:**
-Training Accuracy: 0.514
-Test Accuracy: 0.444
-BestIteration = 699
+1. The user provides app details such as Developer ID, Size, Rating, iOS Version, etc.  
+2. The model (CatBoost) processes the data and predicts the **App Category**.  
+3. The model and schema are automatically loaded from **GitHub Releases** during deployment.  
+4. The Streamlit app displays human-readable predictions like **“Games”**, **“Education”**, etc.
 
-**Feature Importance (CatBoost)**
+---
 
-Top 10 Features impacting prediction:
-DeveloperId
-Time_Gap_Days
-Size_MB
-Updated_Month
-Required_IOS_Version
-Release_Year
-Content_Rating
-Updated_Year
-Release_Month
-Average_User_Rating
+## 🧮 Example Input
 
-**Model Serialization**
-✅ Model saved using joblib as:
-catboost_app_category_model.pkl
-✅ Uploaded to GitHub Releases for Streamlit app download.
+| Feature | Example Value |
+|:---------|:---------------|
+| DeveloperId | 500000000 |
+| Size_MB | 150.0 |
+| Average_User_Rating | 4.3 |
+| Required_IOS_Version | 13.0 |
+| Time_Gap_Days | 120 |
 
-**Model Deployment — Streamlit Web App**
+**🎯 Predicted Output:** `Games`
 
-Deployed the final CatBoost model via Streamlit Cloud
-🌐 Live App: 🌐 **Try it now:** [https://abdulqadir05-app-store-category-predictor.streamlit.app](https://app-store-category-predictor-8amufwrfzumupubzqo6tdx.streamlit.app/)
+---
 
-App Features:
-Input developer, size, rating, iOS version, and time gap
-Model auto-downloads from GitHub release
-Predicts real-time category (e.g., Games, Music, Finance)
-Modern dark-mode UI with icons and styling
+## 🌍 Live Demo
 
-🧰 **Tech Stack**
-Category |	Tools Used
-Language |	Python
-Data Handling|Pandas, NumPy
-Visualization |Matplotlib, Seaborn, Plotly
-Modeling	Scikit-learn,| CatBoost, LightGBM
-Deployment |Streamlit, GitHub
-Version Control |	Git + GitHub
-Storage | GitHub Releases / Google Drive (for model)
+🔗 **[View Deployed App on Streamlit Cloud](https://share.streamlit.io/Abdulqadir05/app-store-category-predictor/main/app.py)**  
+*(Ensure GitHub release files are public for successful model loading.)*
 
-📁 **Project Structure**
-📦 App_Store_Category_Predictor
- ┣ 📜 app.py
- ┣ 📜 requirements.txt
- ┣ 📜 README.md
- ┣ 📜 catboost_app_category_model.pkl  (stored via GitHub release)
- ┗ 📂 dataset/
-     ┗ 📜 appleAppData.csv
-     
-🏁 **Future Improvements**
+---
 
-Integrate preprocessing pipeline directly into app (auto scaling & encoding).
+💡 **Key Highlights**
 
-Add SHAP explainability dashboard.
+✅ End-to-End ML Pipeline (EDA → Feature Engineering → Model → Deployment)
+⚡ GPU Accelerated CatBoost Model
+🌐 Auto-loads model from GitHub Releases
+🧠 Human-readable category names (Games, Education, etc.)
+🎨 Beautiful Streamlit UI with live interaction
 
-Migrate to FastAPI + Docker for API-based deployment.
 
-🌟 **If you liked this project**
+**Future Enhancements**
 
-Give a ⭐ on GitHub to support more open-source AI projects like this!
+🔄 Integrate Real-time App Data via API
+🧩 Add Explainability using SHAP / LIME
+🐳 Containerize with Docker for Cloud Deployment
+🧠 Experiment with Deep Learning models (Transformers, XGBoost hybrid)
 
+🧾** License**
+
+This project is released under the MIT License — free to use, modify, and distribute with attribution.
+
+🌟** Show Your Support**
+
+If you liked this project, give it a ⭐ on GitHub and share it with others!
+Let’s build open, explainable, and scalable AI together 🚀
 

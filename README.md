@@ -90,7 +90,7 @@ This project demonstrates mastery in **Applied AI**, **EDA**, **Model Building**
 
 ## 🌍 Live Demo
 
-🔗 **[View Deployed App on Streamlit Cloud](https://share.streamlit.io/Abdulqadir05/app-store-category-predictor/main/app.py)**  
+🔗 **[View Deployed App on Streamlit Cloud]([https://share.streamlit.io/Abdulqadir05/app-store-category-predictor/main/app.py](https://app-store-category-predictor-awihqbixm6tru4s9ktvrnr.streamlit.app/))**  
 *(Ensure GitHub release files are public for successful model loading.)*
 
 ---

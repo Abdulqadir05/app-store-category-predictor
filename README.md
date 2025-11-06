@@ -21,6 +21,7 @@ It leverages a **CatBoost classifier** trained on over **1.2M App Store apps** t
 |:-------------------:|:--------------------:|
 | ![Demo](https://raw.githubusercontent.com/Abdulqadir05/app-store-category-predictor/main/assets/demo.gif) | ![UI](https://raw.githubusercontent.com/Abdulqadir05/app-store-category-predictor/main/assets/theme-preview.gif) |
 
+
 > 💡 _The UI features smooth gradient animations, glass-morphism cards, and auto-prediction powered by CatBoost._
 
 ---

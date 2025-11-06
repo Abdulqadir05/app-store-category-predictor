@@ -73,9 +73,22 @@ It leverages a **CatBoost classifier** trained on over **1.2M App Store apps** t
 
 ---
 ---
+
+---
+
+## 🧠 Model Files
+
+| File | Description | Source |
+|:------|:-------------|:--------|
+| `catboost_app_category_model.pkl` | Trained CatBoost classifier | [GitHub Release v1.1](https://github.com/Abdulqadir05/app-store-category-predictor/releases/tag/v1.1) |
+| `category_label_encoder.pkl` | Encoded label map for 26 categories | [GitHub Release v1.1](https://github.com/Abdulqadir05/app-store-category-predictor/releases/tag/v1.1) |
+| `feature_schema.pkl` | Training schema info (columns, types) | [GitHub Release v1.1](https://github.com/Abdulqadir05/app-store-category-predictor/releases/tag/v1.1) |
+
+---
+
 ## 🚀 Deployment Pipeline
 
-```mermaid
+mermaid
 graph TD
 A[🧹 Clean Dataset] --> B[🧠 Train CatBoost GPU Model]
 B --> C[💾 Save Artifacts (.pkl)]

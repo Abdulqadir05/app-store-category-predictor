@@ -138,7 +138,7 @@ if st.button("🔮 Predict App Category"):
         try:
             y_pred_num = model.predict(X)
             y_pred_num = np.array(y_pred_num, dtype=int).flatten()
-             y_pred_label = category_map.get(int(y_pred_num[0]), "Unknown")
+            y_pred_label = category_map.get(int(y_pred_num[0]), "Unknown")
 
             st.success(f"🎯 **Predicted App Category:** {y_pred_label}")
         except Exception as e:

@@ -1,5 +1,5 @@
 # ============================================================
-# 📱 APP STORE CATEGORY PREDICTOR — Streamlit + CatBoost (v1.1)
+# 📱 APP STORE CATEGORY PREDICTOR — Streamlit + CatBoost (v1.2)
 # ============================================================
 
 import streamlit as st
@@ -118,7 +118,7 @@ if st.button("🔮 Predict App Category"):
             "DeveloperId": developer_id,
             "Size_MB": app_size_mb,
             "Average_User_Rating": avg_rating,
-            "Required_IOS_Version": str(ios_version),  # keep as string (categorical)
+            "Required_IOS_Version": str(ios_version),  # categorical
             "Time_Gap_Days": time_gap,
             **DEFAULTS
         }
@@ -137,10 +137,15 @@ if st.button("🔮 Predict App Category"):
         # Predict
         try:
             y_pred_num = model.predict(X)
+
+            # ✅ Ensure numpy array shape compatibility
             y_pred_num = np.array(y_pred_num, dtype=int).flatten()
-            y_pred_label = le_target.inverse_transform(y_pred_num)[0]  # ✅ Decoded label
+
+            # ✅ Decode category name safely
+            y_pred_label = le_target.inverse_transform(np.array([y_pred_num[0]]))[0]
 
             st.success(f"🎯 **Predicted App Category:** {y_pred_label}")
+
         except Exception as e:
             st.error(f"⚠️ Prediction failed: {e}")
 

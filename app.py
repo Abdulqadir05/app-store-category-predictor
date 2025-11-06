@@ -136,12 +136,14 @@ if st.button("🔮 Predict App Category"):
 
         # Predict
         try:
+            # Make Prediction
             y_pred_num = model.predict(X)
             y_pred_num = np.array(y_pred_num, dtype=int).flatten()
-            y_pred_label = category_map.get(int(y_pred_num[0]), "Unknown")
+            # 🔹 Convert numeric prediction to label using LabelEncoder
+            y_pred_label = le_target.inverse_transform([int(y_pred_num[0])])[0]
 
             st.success(f"🎯 **Predicted App Category:** {y_pred_label}")
-        except Exception as e:
+       except Exception as e:
             st.error(f"⚠️ Prediction failed: {e}")
 
 # ============================================================

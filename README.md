@@ -14,7 +14,8 @@ It leverages a **CatBoost classifier** trained on over **1.2M App Store apps** t
 
 ## 🎬 Demo
 
-### 🌐 **[🚀 Live Web App]([https://app-store-category-predictor-awihqbixm6tru4s9ktvrnr.streamlit.app/](https://app-store-category-predictor-fcmgedx9sklcnmmm4rte7g.streamlit.app/))**  
+### 🌐 **[### 🌐 **[Live Web App 🎯](https://app-store-category-predictor-fcmgedx9sklcnmmm4rte7g.streamlit.app/)**
+)**  
 *(Hosted on Streamlit Cloud)*
 
 | 🎥 **Demo Preview** | 🧩 **Animated Theme** |

@@ -106,16 +106,16 @@ This project demonstrates mastery in **Applied AI**, **EDA**, **Model Building**
 
 **Future Enhancements**
 
-🔄 Integrate Real-time App Data via API
-🧩 Add Explainability using SHAP / LIME
-🐳 Containerize with Docker for Cloud Deployment
+🔄 Integrate Real-time App Data via API <br>
+🧩 Add Explainability using SHAP / LIME <br>
+🐳 Containerize with Docker for Cloud Deployment <br>
 🧠 Experiment with Deep Learning models (Transformers, XGBoost hybrid)
 
-🧾** License**
+🧾**License**
 
 This project is released under the MIT License — free to use, modify, and distribute with attribution.
 
-🌟** Show Your Support**
+🌟**Show Your Support**
 
 If you liked this project, give it a ⭐ on GitHub and share it with others!
 Let’s build open, explainable, and scalable AI together 🚀

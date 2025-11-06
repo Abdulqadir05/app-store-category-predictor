@@ -77,11 +77,9 @@ Less overfitting
 GPU acceleration support
 
 **Final Metrics:**
-Metric	Value
-Accuracy	0.365
-Balanced Accuracy	0.247
-Weighted F1	0.34
-Best Iteration	697
+Training Accuracy: 0.514
+Test Accuracy: 0.444
+BestIteration = 699
 
 **Feature Importance (CatBoost)**
 

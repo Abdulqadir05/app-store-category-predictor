@@ -1,3 +1,7 @@
+
+# 📱 APP STORE CATEGORY PREDICTOR — Streamlit Deployment
+# =====================================================
+
 import streamlit as st
 import pandas as pd
 import joblib
@@ -5,121 +9,114 @@ import requests
 from pathlib import Path
 
 # -----------------------------------------------------
-# 🔗 Model & Encoder URLs (from GitHub Release)
+# 🔹 GitHub Release URLs (MODEL + SCHEMA)
 # -----------------------------------------------------
 MODEL_URL = "https://github.com/Abdulqadir05/app-store-category-predictor/releases/download/v1.0/catboost_app_category_model.pkl"
-ENC_URL   = "https://github.com/Abdulqadir05/app-store-category-predictor/releases/download/v1.0/ios_version_labelencoder.pkl"
+SCHEMA_URL = "https://github.com/Abdulqadir05/app-store-category-predictor/releases/download/v1.0/feature_schema.pkl"
 
 MODEL_PATH = "catboost_app_category_model.pkl"
-ENC_PATH   = "ios_version_labelencoder.pkl"
+SCHEMA_PATH = "feature_schema.pkl"
 
 # -----------------------------------------------------
-# 📦 Function to Download Files from GitHub
+# 🔹 Utility: Download file if missing
 # -----------------------------------------------------
 def download_file(url, out_path, label):
+    """Downloads large files from GitHub release"""
     if Path(out_path).exists():
         return
-    with st.spinner(f"📥 Downloading {label}..."):
-        r = requests.get(url, stream=True, timeout=180)
-        r.raise_for_status()
-        with open(out_path, "wb") as f:
-            for chunk in r.iter_content(8192):
-                if chunk:
-                    f.write(chunk)
-    st.success(f"✅ {label} downloaded successfully!")
+    with st.spinner(f"📥 Downloading {label}... please wait"):
+        try:
+            r = requests.get(url, stream=True, timeout=180)
+            r.raise_for_status()
+            with open(out_path, "wb") as f:
+                for chunk in r.iter_content(8192):
+                    if chunk:
+                        f.write(chunk)
+            st.success(f"✅ {label} downloaded successfully!")
+        except Exception as e:
+            st.error(f"❌ Failed to download {label}: {e}")
 
 # -----------------------------------------------------
-# 🧠 Load Model and Encoder
+# 🔹 Load model & schema
 # -----------------------------------------------------
 try:
     if not Path(MODEL_PATH).exists():
-        download_file(MODEL_URL, MODEL_PATH, "CatBoost Model")
-    if not Path(ENC_PATH).exists():
-        download_file(ENC_URL, ENC_PATH, "iOS Version Encoder")
+        download_file(MODEL_URL, MODEL_PATH, "Model")
+    if not Path(SCHEMA_PATH).exists():
+        download_file(SCHEMA_URL, SCHEMA_PATH, "Schema")
 
     model = joblib.load(MODEL_PATH)
-    le_ios = joblib.load(ENC_PATH)
-    st.success("✅ Model & Encoder loaded successfully!")
+    schema = joblib.load(SCHEMA_PATH)
+    st.success("✅ Model and schema loaded successfully!")
 
 except Exception as e:
-    st.error(f"⚠️ Model or Encoder load failed: {e}")
-    model, le_ios = None, None
+    st.error(f"⚠️ Model loading failed: {e}")
+    model, schema = None, None
 
 # -----------------------------------------------------
-# 🧩 Streamlit App UI
+# 🔹 Category mapping (for human-readable output)
 # -----------------------------------------------------
-st.title("📱 App Store Category Predictor")
-st.markdown("Predict the category of an iOS app using a trained **CatBoost model**. Enter app details below 👇")
-
-# ---- User Inputs ----
-developer_id  = st.number_input("👨‍💻 Developer ID", min_value=0, step=1, value=500000000)
-app_size_mb   = st.number_input("💾 App Size (MB)", min_value=0.0, step=0.1, value=150.0)
-avg_rating    = st.slider("⭐ Average User Rating", 0.0, 5.0, 4.5, 0.1)
-ios_version_f = st.text_input("📱 Required iOS Version (e.g., 13.0 or 4+)", value="13.0")
-time_gap_days = st.number_input("⏱️ Time Gap (Days)", min_value=0, step=1, value=120)
-
-# ---- Fixed Default Columns (used during training) ----
-TRAINING_FEATURES = [
-    "DeveloperId", "Size_MB", "Average_User_Rating", "Required_IOS_Version",
-    "Time_Gap_Days", "Content_Rating", "Release_Year",
-    "Updated_Year", "Updated_Month", "Release_Month"
-]
-
-DEFAULTS = {
-    "Content_Rating": "4+",   # based on training defaults
-    "Release_Year": 2023,
-    "Updated_Year": 2024,
-    "Updated_Month": 5,
-    "Release_Month": 8
+category_map = {
+    0: 'Book', 1: 'Business', 2: 'Catalogs', 3: 'Education', 4: 'Entertainment',
+    5: 'Finance', 6: 'Food & Drink', 7: 'Games', 8: 'Health & Fitness', 9: 'Lifestyle',
+    10: 'Medical', 11: 'Music', 12: 'Navigation', 13: 'News', 14: 'Photo & Video',
+    15: 'Productivity', 16: 'Reference', 17: 'Shopping', 18: 'Social Networking',
+    19: 'Sports', 20: 'Travel', 21: 'Utilities', 22: 'Weather', 23: 'Kids',
+    24: 'Graphics & Design', 25: 'AR & VR'
 }
 
 # -----------------------------------------------------
-# 🔮 Prediction Section
+# 🎨 Streamlit UI
 # -----------------------------------------------------
-if st.button("🔮 Predict Category"):
-    if (model is None) or (le_ios is None):
-        st.error("⚠️ Model or encoder not loaded.")
+st.title("📱 App Store Category Predictor")
+st.markdown("Predict the **category of an iOS app** using a trained CatBoost model.")
+
+st.divider()
+
+# 🔹 User Inputs
+developer_id  = st.number_input("👨‍💻 Developer ID", min_value=0, step=1, value=500000000)
+app_size_mb   = st.number_input("💾 App Size (MB)", min_value=0.0, step=0.1, value=120.5)
+avg_rating    = st.slider("⭐ Average User Rating", 0.0, 5.0, 4.3, 0.1)
+ios_version   = st.text_input("📱 Required iOS Version (e.g., 13.0)", value="13.0")
+time_gap_days = st.number_input("⏱️ Time Gap (Days)", min_value=0, step=1, value=150)
+
+st.divider()
+
+# 🔹 Prediction button
+if st.button("🔮 Predict App Category"):
+    if model is None or schema is None:
+        st.error("⚠️ Model not loaded. Please refresh and try again.")
     else:
         try:
-            # Clean iOS version input (remove '+')
-            ios_str = str(ios_version_f).replace("+", "").strip()
-
-            # Encode using saved LabelEncoder
-            try:
-                ios_encoded = int(le_ios.transform([ios_str])[0])
-            except Exception:
-                # Fallback: unseen iOS versions handled safely
-                classes = list(le_ios.classes_)
-                if ios_str in classes:
-                    ios_encoded = int(le_ios.transform([ios_str])[0])
-                else:
-                    ios_encoded = int(le_ios.transform([max(classes)])[0])
-
-            # Prepare feature DataFrame (matching training order)
-            row = {
+            # Prepare input
+            features = schema["features"]
+            input_data = pd.DataFrame([{
                 "DeveloperId": developer_id,
                 "Size_MB": app_size_mb,
                 "Average_User_Rating": avg_rating,
-                "Required_IOS_Version": ios_encoded,
+                "Required_IOS_Version": ios_version,
                 "Time_Gap_Days": time_gap_days,
-                **DEFAULTS
-            }
+                "Content_Rating": "4+",
+                "Release_Year": 2023,
+                "Updated_Year": 2024,
+                "Updated_Month": 6,
+                "Release_Month": 8
+            }])[features]
 
-            X = pd.DataFrame([row])[TRAINING_FEATURES]
+            st.caption("🧩 Final input sample sent to model:")
+            st.dataframe(input_data)
 
-            st.caption("🧩 Final features sent to model (training schema):")
-            st.dataframe(X)
+            # Predict
+            y_pred_num = model.predict(input_data)
+            y_pred_label = category_map.get(int(y_pred_num[0]), "Unknown")
 
-            # Predict category
-            y_pred = model.predict(X)[0]
-            st.success(f"🎯 Predicted App Category: {y_pred}")
+            st.success(f"🎯 **Predicted App Category:** {y_pred_label}")
 
         except Exception as e:
             st.error(f"⚠️ Prediction failed: {e}")
 
 # -----------------------------------------------------
-# 🧾 Footer
+# 🧾 FOOTER
 # -----------------------------------------------------
 st.markdown("---")
-st.caption("🚀 Powered by CatBoost & Streamlit | Developed by **Abdul Qadir (IIT Jodhpur)**")
-
+st.caption("🚀 Built & Deployed by **Abdul Qadir** | IIT Jodhpur | Powered by CatBoost & Streamlit")

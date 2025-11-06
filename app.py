@@ -60,15 +60,45 @@ st.markdown("""
 # =============================================================
 @st.cache_resource
 def load_model():
+    import requests
+    from pathlib import Path
+
+    model_path = Path("catboost_app_category_model.pkl")
+    encoder_path = Path("category_label_encoder.pkl")
+
+    # 🔗 Direct GitHub release URLs
+    model_url = "https://github.com/Abdulqadir05/app-store-category-predictor/releases/download/v1.0/catboost_app_category_model.pkl"
+    encoder_url = "https://github.com/Abdulqadir05/app-store-category-predictor/releases/download/v1.0/category_label_encoder.pkl"
+
+    # 📥 Download model if not exists
+    if not model_path.exists():
+        st.info("📦 Downloading model from GitHub release (please wait 20–30 seconds)...")
+        with requests.get(model_url, stream=True, timeout=180) as r:
+            r.raise_for_status()
+            with open(model_path, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+
+    # 📥 Download encoder if not exists
+    if not encoder_path.exists():
+        st.info("📦 Downloading label encoder from GitHub release...")
+        with requests.get(encoder_url, stream=True, timeout=180) as r:
+            r.raise_for_status()
+            with open(encoder_path, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+
     try:
-        model = joblib.load("catboost_app_category_model.pkl")
-        le_target = joblib.load("category_label_encoder.pkl")
+        model = joblib.load(model_path)
+        le_target = joblib.load(encoder_path)
+        st.success("✅ Model and encoder loaded successfully!")
         return model, le_target
     except Exception as e:
-        st.error(f"⚠️ Failed to load model: {e}")
+        st.error(f"⚠️ Failed to load model or encoder: {e}")
         return None, None
 
-model, le_target = load_model()
 
 # =============================================================
 # 🏷️ App Header
